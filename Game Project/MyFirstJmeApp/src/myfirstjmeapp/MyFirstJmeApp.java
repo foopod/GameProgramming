@@ -58,16 +58,17 @@ public class MyFirstJmeApp extends SimpleApplication{
         rootNode.attachChild(geom);
         
         /** Model Test */
+        float scaleSofa = .01f;
         Spatial sofa = assetManager.loadModel("Models/Sofa/small sofa.obj");
         Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
         sofa.setMaterial(mat_default);
-        sofa.scale(-10,-10,-10);
-        sofa.setLocalTranslation(2,3,0);
+        sofa.scale(scaleSofa);
+        sofa.move(0,-5,-10);
         rootNode.attachChild(sofa);
         
         
         /** Terrain/Map */
-        Box floor = new Box(new Vector3f(0,-1,0), 100, (float)0.05, 100);
+        Box floor = new Box(new Vector3f(0,-20,0), 100, 1, 100);
         Geometry floorGeom = new Geometry("Floor", floor);
         Material matGround = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         matGround.setTexture("ColorMap", assetManager.loadTexture("Textures/Terrain/ground.jpg"));
@@ -75,7 +76,7 @@ public class MyFirstJmeApp extends SimpleApplication{
         mapNode.attachChild(floorGeom);
         
         DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(-1f, 2f, -1f).normalizeLocal());
+        sun.setDirection(new Vector3f(-1, 2, -1).normalizeLocal());
         mapNode.addLight(sun);
         
         /** WaterMark */
