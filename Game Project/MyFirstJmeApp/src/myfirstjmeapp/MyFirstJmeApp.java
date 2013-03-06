@@ -7,14 +7,13 @@ package myfirstjmeapp;
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -34,6 +33,7 @@ public class MyFirstJmeApp extends SimpleApplication{
     }
     
     private Geometry player;
+    private Spatial sofa;
     Boolean isRunning = true;
     
     @Override
@@ -59,9 +59,10 @@ public class MyFirstJmeApp extends SimpleApplication{
         
         /** Model Test */
         float scaleSofa = .01f;
-        Spatial sofa = assetManager.loadModel("Models/Sofa/small sofa.obj");
-        Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
-        sofa.setMaterial(mat_default);
+        sofa = assetManager.loadModel("Models/Sofa/small sofa.obj");
+        Material matDefault = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matDefault.setTexture("ColorMap", assetManager.loadTexture("Models/Sofa/OBJ_Chair_Sofa_D_02.tga"));
+        sofa.setMaterial(matDefault);
         sofa.scale(scaleSofa);
         sofa.move(0,-5,-10);
         rootNode.attachChild(sofa);
@@ -94,20 +95,23 @@ public class MyFirstJmeApp extends SimpleApplication{
     
     private void initKeys(){
         inputManager.addMapping("Pause",  new KeyTrigger(KeyInput.KEY_P));
-        inputManager.addMapping("Left",   new KeyTrigger(KeyInput.KEY_LEFT));
-        inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping("Up",   new KeyTrigger(KeyInput.KEY_I));
+        inputManager.addMapping("Left",   new KeyTrigger(KeyInput.KEY_J));
+        inputManager.addMapping("Down",   new KeyTrigger(KeyInput.KEY_K));
+        inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_L));
         
-        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_SPACE),
-                                      new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        
+        
         
         inputManager.addListener(actionListener, new String[]{"Pause"});
-        inputManager.addListener(analogListener, new String[]{"Left", "Right", "Rotate"});
+        inputManager.addListener(analogListener, new String[]{"Left", "Right", "Up", "Down"});
     }
     
     private ActionListener actionListener = new ActionListener() {
         public void onAction(String name, boolean isPressed, float tpf) {
             if(name.equals("Pause") && !isPressed){
                 isRunning = !isRunning;
+                System.out.println(isRunning);
             }
         }
     };
@@ -115,14 +119,23 @@ public class MyFirstJmeApp extends SimpleApplication{
     private AnalogListener analogListener = new AnalogListener() {
             public void onAnalog(String name, float value, float tpf) {
                 if(isRunning){
+                    int moveSpeed = 20;
                     if(name.equals("Rotate")){
-                        player.rotate(0, 5*value*speed, 0);
+                        sofa.rotate(0, 5*value*speed, 0);
+                    }else if(name.equals("Up")){
+                        Vector3f vs = new Vector3f(0,0,moveSpeed*tpf);
+                        Quaternion sofaRotation = sofa.getLocalRotation();
+                        Vector3f moveVector = sofaRotation.mult(vs);
+                        sofa.move(moveVector);
                     }else if(name.equals("Right")){
-                        Vector3f v = player.getLocalTranslation();
-                        player.setLocalTranslation(v.x + value*speed, v.y, v.z);
+                        sofa.rotate(0, -5*value*speed, 0);
                     }else if(name.equals("Left")){
-                        Vector3f v = player.getLocalTranslation();
-                        player.setLocalTranslation(v.x - value*speed, v.y, v.z);
+                        sofa.rotate(0, 5*value*speed, 0);
+                    }else if(name.equals("Down")){
+                        Vector3f vs = new Vector3f(0,0,-moveSpeed*tpf);
+                        Quaternion sofaRotation = sofa.getLocalRotation();
+                        Vector3f moveVector = sofaRotation.mult(vs);
+                        sofa.move(moveVector);
                     }else{
                         System.out.println("Press P to unpause.");
                     }
