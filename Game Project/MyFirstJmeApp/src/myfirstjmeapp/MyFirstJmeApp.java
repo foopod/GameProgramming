@@ -10,7 +10,6 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -49,13 +48,10 @@ public class MyFirstJmeApp extends SimpleApplication{
         mat.setColor("Color", ColorRGBA.Red);
         player.setMaterial(mat);
         rootNode.attachChild(player);
-        
-        
-        Box box = new Box(Vector3f.ZERO, 1, 1, 1);
-        Geometry geom = new Geometry("Box", box);
-        mat.setColor("Color", ColorRGBA.Red);
-        geom.setMaterial(mat);
-        rootNode.attachChild(geom);
+
+        /** Map Creation */
+        Map testMap = new Map(rootNode, assetManager);
+        testMap.mapInit();
         
         /** Model Test */
         float scaleSofa = .01f;
@@ -67,18 +63,6 @@ public class MyFirstJmeApp extends SimpleApplication{
         sofa.move(0,-5,-10);
         rootNode.attachChild(sofa);
         
-        
-        /** Terrain/Map */
-        Box floor = new Box(new Vector3f(0,-20,0), 100, 1, 100);
-        Geometry floorGeom = new Geometry("Floor", floor);
-        Material matGround = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matGround.setTexture("ColorMap", assetManager.loadTexture("Textures/Terrain/ground.jpg"));
-        floorGeom.setMaterial(matGround);
-        mapNode.attachChild(floorGeom);
-        
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(-1, 2, -1).normalizeLocal());
-        mapNode.addLight(sun);
         
         /** WaterMark */
         guiNode.detachAllChildren();;
